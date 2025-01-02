@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      major:
+        description: "Major version, e.g. 5.0.5"
+        required: true
+        type: string
+      minor:
+        description: "Minor version, e.g. 310"
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download ZIP
+        run: |
+          url="https://repo.huaweicloud.com/harmonyos/ohpm/${{ github.event.inputs.major }}/commandline-tools-linux-x64-${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}.zip"
+          echo "Downloading from $url"
+          curl -LO "$url"
+
+      - name: Split into 512MB chunks
+        run: |
+          file="commandline-tools-linux-x64-${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}.zip
+          split -b 512M "$file" "$file."
+          ls "$file."* > manifest.txt
+
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
+
+      - name: Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: ${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}
+          prerelease: false
+          files: |
+            *.zip.*
+            manifest.txt

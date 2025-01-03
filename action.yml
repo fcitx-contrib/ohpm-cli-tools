@@ -1,0 +1,28 @@
+name: Install OpenHarmony SDK
+
+inputs:
+  major:
+    description: "Major version, e.g. 5.0.5"
+    required: true
+    type: string
+  minor:
+    description: "Minor version, e.g. 310"
+    required: true
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        # Download commandline tools and unzip
+        mkdir /tmp/ohpm-cli-tools && cd /tmp/ohpm-cli-tools
+        wget -nv https://github.com/fcitx-contrib/ohpm-cli-tools/releases/download/${{ inputs.major }}.${{ inputs.minor }}/manifest.txt
+        while IFS= read -r file; do
+          echo "Downloading $file"
+          wget -nv https://github.com/fcitx-contrib/ohpm-cli-tools/releases/download/${{ inputs.major }}.${{ inputs.minor }}/$file
+        done < manifest.txt
+        cat *.zip.* > tool.zip
+        rm *.zip.*
+        unzip tool.zip -d /tmp
+        cd .. && rm -rf ohpm-cli-tools

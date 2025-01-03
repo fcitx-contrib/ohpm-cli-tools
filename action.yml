@@ -16,6 +16,7 @@ runs:
     - shell: bash
       run: |
         # Download commandline tools and unzip
+        mkdir /tmp/ohpm-cli-tools && cd /tmp/ohpm-cli-tools
         wget -nv https://github.com/fcitx-contrib/ohpm-cli-tools/releases/download/${{ inputs.major }}.${{ inputs.minor }}/manifest.txt
         while IFS= read -r file; do
           echo "Downloading $file"
@@ -24,3 +25,4 @@ runs:
         cat *.zip.* > tool.zip
         rm *.zip.*
         unzip tool.zip -d /tmp
+        cd .. && rm -rf ohpm-cli-tools

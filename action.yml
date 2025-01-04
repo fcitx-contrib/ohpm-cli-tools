@@ -26,3 +26,4 @@ runs:
         rm *.zip.*
         unzip tool.zip -d /tmp
         cd .. && rm -rf ohpm-cli-tools
+        echo /tmp/command-line-tools/bin >> $GITHUB_PATH

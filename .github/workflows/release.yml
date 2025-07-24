@@ -25,7 +25,7 @@ jobs:
 
       - name: Split into 512MB chunks
         run: |
-          file="commandline-tools-linux-x64-${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}.zip
+          file=commandline-tools-linux-x64-${{ github.event.inputs.major }}.${{ github.event.inputs.minor }}.zip
           split -b 512M "$file" "$file."
           ls "$file."* > manifest.txt
 
